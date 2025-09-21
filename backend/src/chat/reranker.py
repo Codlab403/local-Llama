@@ -2,16 +2,8 @@ from typing import List, Dict, Any, Optional
 
 from ..embeddings import adapter as embed_adapter
 from .. import config
+from . import cross_encoder_adapter
 
-_cross_encoder = None
-
-try:
-    # Optional dependency; if available, we'll use it for higher-quality reranking
-    from sentence_transformers import CrossEncoder
-
-    _cross_encoder = CrossEncoder
-except Exception:
-    _cross_encoder = None
 
 
 def _dot(a: List[float], b: List[float]) -> float:
@@ -32,7 +24,8 @@ def rerank(query: str, candidates: List[Dict[str, Any]], query_embedding: Option
     `metadata.embedding` if dot-product fallback is used.
     """
     # Try cross-encoder first
-    if _cross_encoder is not None and candidates and config.use_cross_encoder():
+    CE = cross_encoder_adapter.get_cross_encoder_class()
+    if CE is not None and candidates and config.use_cross_encoder():
         try:
             # Lazy model load to avoid heavy startup cost during tests
             snippets = [c.get("snippet", "") for c in candidates]
@@ -40,7 +33,11 @@ def rerank(query: str, candidates: List[Dict[str, Any]], query_embedding: Option
             if not any(s for s in snippets if s and s.strip()):
                 raise RuntimeError("no snippets to score; skip cross-encoder")
 
-            model = _cross_encoder("cross-encoder/stsb-roberta-large")
+            # Use adapter to obtain a cached model instance (may return None)
+            model = cross_encoder_adapter.get_model()
+            if model is None:
+                raise RuntimeError("cross-encoder not available")
+
             scores = _cross_encoder_score(model, query, snippets)
             scored = []
             for c, s in zip(candidates, scores):

@@ -1,0 +1,40 @@
+openapi: 3.0.0
+info:
+  title: Local RAG MVP API (partial)
+  version: 0.1.0
+paths:
+  /upload:
+    post:
+      summary: Upload a document for ingestion
+      responses:
+        '200':
+          description: Returns a task id for ingestion
+  /ingest/{task_id}:
+    get:
+      summary: Get ingestion status
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ingestion status
+  /chat:
+    post:
+      summary: Stream chat tokens and return final citations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                query:
+                  type: string
+      responses:
+        '200':
+          description: Streams tokens; final result includes citations

@@ -1,3 +1,28 @@
+"""Nightly evaluation job skeleton.
+
+Provides a register_job function that can be wired into a scheduler.
+"""
+from typing import Callable, Optional
+
+
+def register_job(job_func: Callable, schedule: Optional[str] = "@daily") -> dict:
+    """Register a job with a simple metadata contract.
+
+    Args:
+        job_func: callable to execute
+        schedule: cron-like schedule string (informational)
+
+    Returns:
+        dict describing registration
+    """
+    # In future, integrate with background scheduler (APScheduler / RQ / Celery)
+    return {"name": getattr(job_func, "__name__", "job"), "schedule": schedule}
+
+
+def sample_evaluation():
+    """A tiny placeholder evaluation function."""
+    # Example: compute recall@k against a small gold set
+    return {"ok": True}
 """Nightly evaluation skeleton for Local-first RAG.
 
 This module provides a simple entrypoint that can be scheduled (e.g., via
@@ -20,7 +45,7 @@ def run_nightly_evaluation() -> Dict[str, Any]:
     or extend this with retrieval, generation, and metrics calculation.
     """
     logger.info("Starting nightly evaluation (stub)")
-    report = {"evaluated": 0, "metrics": {}}
+    report: Dict[str, Any] = {"evaluated": 0, "metrics": {}}
     logger.info("Finished nightly evaluation")
     return report
 

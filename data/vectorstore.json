@@ -1,0 +1,35 @@
+{
+  "node-1": {
+    "embedding": [
+      10.0,
+      0.1
+    ],
+    "metadata": {
+      "doc_id": "doc-1",
+      "page": 1,
+      "snippet": "Alpha content"
+    }
+  },
+  "node-2": {
+    "embedding": [
+      20.0,
+      0.2
+    ],
+    "metadata": {
+      "doc_id": "doc-2",
+      "page": 2,
+      "snippet": "Beta content"
+    }
+  },
+  "node-3": {
+    "embedding": [
+      30.0,
+      0.3
+    ],
+    "metadata": {
+      "doc_id": "doc-3",
+      "page": 3,
+      "snippet": "Gamma content"
+    }
+  }
+}

@@ -9,14 +9,19 @@ from contextlib import asynccontextmanager
 import time
 from fastapi import Request
 from .. import observability
+from ..ingest import scheduler
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Initialize DB and other startup tasks here
     meta.init_db()
+    # start background ingestion scheduler
+    sched = scheduler.get_default_scheduler()
+    sched.start()
     yield
     # Place for graceful shutdown tasks if needed
+    sched.stop()
 
 
 app = FastAPI(lifespan=lifespan)
