@@ -1,6 +1,7 @@
 from typing import List, Dict, Any, Optional
 
 from ..embeddings import adapter as embed_adapter
+from .. import config
 
 _cross_encoder = None
 
@@ -31,7 +32,7 @@ def rerank(query: str, candidates: List[Dict[str, Any]], query_embedding: Option
     `metadata.embedding` if dot-product fallback is used.
     """
     # Try cross-encoder first
-    if _cross_encoder is not None and candidates:
+    if _cross_encoder is not None and candidates and config.use_cross_encoder():
         try:
             # Lazy model load to avoid heavy startup cost during tests
             snippets = [c.get("snippet", "") for c in candidates]
